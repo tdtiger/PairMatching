@@ -8,7 +8,7 @@ pairmatching.pyxapp・・・アプリケーション配布ファイル形式
 
 <h2>デモ</h2>
 下のリンクをクリックすると，ブラウザ版のアプリケーションが起動します．<br>
-https://tdtiger.github.io/PairMatching/
+https://tdtiger.github.io/PairMatching/PairMatching.html
 
 <h2>使用ライブラリ</h2>
 Pyxel
