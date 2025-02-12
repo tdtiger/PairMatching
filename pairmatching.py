@@ -26,6 +26,7 @@ class Field:
                 tmp[y][x] = Card(y, x + 1)
 
         grid = [[0] * COL for _ in range(LINE)]
+        # 一度整列した状態のカード群を作り，そこからランダムに並び変えていく
         for y in range(LINE):
             for x in range(COL):
                 l = random.randint(0, len(tmp) - 1)
@@ -41,12 +42,14 @@ class Field:
 
 class App:
     def __init__(self):
-        pyxel.init(WINDOW_WIDTH, WINDOW_HEIGHT, title = "神経衰弱")
+        pyxel.init(WINDOW_WIDTH, WINDOW_HEIGHT, title = "PairMatching")
         pyxel.load("resource_pairmatching.pyxres")
         self.field = Field()
         self.score = 0
         self.ren = 0
         self.remaining = 52
+        self.time = 0
+        self.bonus = random.randint(0, 3)
         self.selected = []
         self.watching = False
         self.wait_time = 30
@@ -83,12 +86,25 @@ class App:
         pyxel.text(60, 3, f"remaining:{self.remaining}", 7)
         pyxel.text(120, 3, f"combo:{self.ren}", 7)
         pyxel.text(160, 3, f"time:{pyxel.frame_count // 30}", 7)
+        tmp = ["red", "blue", "green", "yellow"][self.bonus]
+        pyxel.text(200, 3, f"bonus:{tmp}", 7)
 
         if self.remaining == 0:
+            pyxel.cls(0)
             pyxel.text(WINDOW_WIDTH / 2 - 30, WINDOW_HEIGHT / 2 - 5, "GAME CLEAR!!", pyxel.frame_count % 16)
+            pyxel.text(WINDOW_WIDTH / 2 - 40, WINDOW_HEIGHT / 2 + 5, f"score:{self.score}", 7)
+            pyxel.text(WINDOW_WIDTH / 2 - 40, WINDOW_HEIGHT / 2 + 15, f"time :{self.time}", 7)
+            pyxel.text(WINDOW_WIDTH / 2 - 40, WINDOW_HEIGHT / 2 + 35, f"click to exit", 7)
+
+
             if self.fanf:
+                self.time = pyxel.frame_count // 30
                 self.fanf = False
                 pyxel.playm(0, 0 ,loop = False)
+
+            if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
+                pyxel.quit()
+
             return
 
         for l in range(LINE):
@@ -111,6 +127,7 @@ class App:
             pyxel.play(1, 1, loop = False)
             self.score += 100 + 50 * self.ren
             self.ren += 1
+            self.check_bonus()
             self.field.grid[self.selected[0].pos[0]][self.selected[0].pos[1]].isExist = False
             self.field.grid[self.selected[1].pos[0]][self.selected[1].pos[1]].isExist = False
             self.remaining -= 2
@@ -123,4 +140,8 @@ class App:
 
         self.selected = []
 
+    def check_bonus(self):
+        if self.selected[0].color == self.bonus or self.selected[1].color == self.bonus:
+            self.score += 50
+        self.bonus = random.randint(0, 3)
 App()
