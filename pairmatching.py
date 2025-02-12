@@ -1,5 +1,4 @@
 import pyxel
-import random
 
 WINDOW_WIDTH = 276
 WINDOW_HEIGHT = 150
@@ -29,8 +28,8 @@ class Field:
         # 一度整列した状態のカード群を作り，そこからランダムに並び変えていく
         for y in range(LINE):
             for x in range(COL):
-                l = random.randint(0, len(tmp) - 1)
-                c = random.randint(0, len(tmp[l]) - 1)
+                l = pyxel.rndi(0, len(tmp) - 1)
+                c = pyxel.rndi(0, len(tmp[l]) - 1)
                 grid[y][x] = tmp[l][c]
                 grid[y][x].pos = [y, x]
 
@@ -49,7 +48,7 @@ class App:
         self.ren = 0
         self.remaining = 52
         self.time = 0
-        self.bonus = random.randint(0, 3)
+        self.bonus = pyxel.rndi(0, 3)
         self.selected = []
         self.watching = False
         self.wait_time = 30
@@ -143,5 +142,5 @@ class App:
     def check_bonus(self):
         if self.selected[0].color == self.bonus or self.selected[1].color == self.bonus:
             self.score += 50
-        self.bonus = random.randint(0, 3)
+        self.bonus = pyxel.rndi(0, 3)
 App()
