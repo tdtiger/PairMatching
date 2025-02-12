@@ -1,6 +1,14 @@
 # PairMatching
 1--13の数字が書かれた赤，青，緑，黄色のカードをめくり，同じ数字のペアを作る，神経衰弱っぽいゲームです．<br>
 連続でペアをそろえたり，ボーナスに指定された色のカードを含めてペアをそろえると，得点を多く獲得できます．<br>
+<br>
+index.html・・・ブラウザ上で動作<br>
+PairMatching.exe・・・実行形式<br>
+pairmatching.pyxapp・・・アプリケーション配布ファイル形式
+
+<h2>デモ</h2>
+下のリンクをクリックすると，ブラウザ版のアプリケーションが起動します．<br>
+https://tdtiger.github.io/PairMatching/
 
 <h2>使用ライブラリ</h2>
 Pyxel
