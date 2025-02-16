@@ -60,12 +60,16 @@ class App:
     def update_title(self):
         if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
             # ゲーム開始ボタンがクリックされた時
-            if pyxel.width // 2 - 55 <= pyxel.mouse_x <= pyxel.width // 2 + 50 and pyxel.height // 2 + 18 <= pyxel.mouse_y <= pyxel.height // 2 + 27:
+            if pyxel.width // 2 - 52 <= pyxel.mouse_x <= pyxel.width // 2 + 47 and pyxel.height // 2 + 28 <= pyxel.mouse_y <= pyxel.height // 2 + 37:
                 self.mode = "game"
                 self.start_game()
-            # TODO:スキン変更ボタンがクリックされた時
+            elif pyxel.width // 2 - 25 <= pyxel.mouse_x <= pyxel.width // 2 - 20 and  pyxel.height // 4 + 37 <= pyxel.mouse_y <= pyxel.height // 4 + 47:
+                self.skin = max(0, self.skin - 1)
+            elif pyxel.width // 2 + 20 <= pyxel.mouse_x <= pyxel.width // 2 + 25 and  pyxel.height // 4 + 37 <= pyxel.mouse_y <= pyxel.height // 4 + 47:
+                self.skin = min(self.skin + 1, 5)
 
     def update_game(self):
+        self.my_frame_count += 1
         if not self.wait_start == None:
             if pyxel.frame_count - self.wait_start >= self.wait_time:
                 self.check_pair()
@@ -93,9 +97,8 @@ class App:
             self.fanf = False
             pyxel.playm(0, 0 ,loop = False)
 
-        # TODO:ゲーム終了ではなく，初期化してタイトルに戻るようにする
         if pyxel.btnp(pyxel.MOUSE_BUTTON_LEFT):
-            pyxel.quit()
+            self.mode = "title"
 
     def start_game(self):
         self.field = Field()
@@ -103,6 +106,7 @@ class App:
         self.ren = 0
         self.remaining = 52
         self.time = 0
+        self.my_frame_count = 0
         self.bonus = pyxel.rndi(0, 3)
         self.selected = []
         self.watching = False
@@ -120,20 +124,26 @@ class App:
 
     def draw_title(self):
         pyxel.cls(0)
-        pyxel.text(pyxel.width // 2 - 35, pyxel.height // 4, "Pair Matching", pyxel.frame_count % 16)
+        pyxel.text(pyxel.width // 2 - 24, pyxel.height // 4, "Pair Matching", pyxel.frame_count % 16)
+        pyxel.text(pyxel.width // 2 - 20, pyxel.height // 4 + 20,  "select skin", 7)
+        pyxel.blt(pyxel.width // 2 - 8, pyxel.height // 4 + 30, 0, self.skin * 16, 0, 16, 24)
+        if not self.skin == 0:
+            pyxel.tri(pyxel.width // 2 - 25, pyxel.height // 4 + 42, pyxel.width // 2 - 20, pyxel.height // 4 + 37, pyxel.width // 2 - 20, pyxel.height // 4 + 47, 3)
+        if not self.skin == 5:
+            pyxel.tri(pyxel.width // 2 + 25, pyxel.height // 4 + 42, pyxel.width // 2 + 20, pyxel.height // 4 + 37, pyxel.width // 2 + 20, pyxel.height // 4 + 47, 3)
         if 0 <= pyxel.frame_count % 40 <= 25:
             col = 7
         else:
             col = 0
-        pyxel.rectb(pyxel.width // 2 - 55, pyxel.height // 2 + 18, 105, 9, col)
-        pyxel.text(pyxel.width // 2 - 50, pyxel.height // 2 + 20, "Click here to start game", col)
+        pyxel.rectb(pyxel.width // 2 - 52, pyxel.height // 2 + 28, 105, 9, col)
+        pyxel.text(pyxel.width // 2 - 47, pyxel.height // 2 + 30, "Click here to start game", col)
 
     def draw_game(self):
         pyxel.cls(0)
         pyxel.text(10, 3, f"score:{self.score}", 7)
         pyxel.text(60, 3, f"remaining:{self.remaining}", 7)
         pyxel.text(120, 3, f"combo:{self.ren}", 7)
-        pyxel.text(160, 3, f"time:{pyxel.frame_count // 30}", 7)
+        pyxel.text(160, 3, f"time:{self.my_frame_count // 30}", 7)
         tmp = ["red", "blue", "green", "yellow"][self.bonus]
         pyxel.text(200, 3, f"bonus:{tmp}", 7)
 
@@ -147,16 +157,16 @@ class App:
                     if self.field.grid[l][c].isSelected == True:
                         pyxel.blt(10 + 20 * c, 20 + 30 * l, 1, (self.field.grid[l][c].num - 1) * 16, self.field.grid[l][c].color * 24, 16, 24)
                     else:
-                        pyxel.blt(10 + 20 * c, 20 + 30 * l, 0, self.skin, 0, 16, 24)
+                        pyxel.blt(10 + 20 * c, 20 + 30 * l, 0, self.skin * 16, 0, 16, 24)
                 else:
                     pass
 
     def draw_gameclear(self):
         pyxel.cls(0)
-        pyxel.text(WINDOW_WIDTH / 2 - 30, WINDOW_HEIGHT / 2 - 5, "GAME CLEAR!!", pyxel.frame_count % 16)
-        pyxel.text(WINDOW_WIDTH / 2 - 40, WINDOW_HEIGHT / 2 + 5, f"score:{self.score}", 7)
-        pyxel.text(WINDOW_WIDTH / 2 - 40, WINDOW_HEIGHT / 2 + 15, f"time :{self.time}", 7)
-        pyxel.text(WINDOW_WIDTH / 2 - 40, WINDOW_HEIGHT / 2 + 35, f"click to exit", 7)
+        pyxel.text(pyxel.width // 2 - 25, pyxel.height // 2 - 15, "GAME CLEAR!!", pyxel.frame_count % 16)
+        pyxel.text(pyxel.width // 2 - 21, pyxel.height // 2 + 5, f"score:{self.score}", 7)
+        pyxel.text(pyxel.width // 2 - 21, pyxel.height // 2 + 15, f"time :{self.time}", 7)
+        pyxel.text(pyxel.width // 2 - 40, pyxel.height // 2 + 35, f"click to move title", 7)
 
     def check_pair(self):
         # 同じカードが二回選択された時は何もせずに元に戻す
